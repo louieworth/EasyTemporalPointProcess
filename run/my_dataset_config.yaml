@@ -1,0 +1,409 @@
+pipeline_config_id: runner_config
+data:
+  e_commerce:
+    data_format: json
+    train_dir: dataset/e_commerce_train.json
+    valid_dir: dataset/e_commerce_test.json
+    test_dir: dataset/e_commerce_test.json
+    data_specs:
+      num_event_types: 5
+      pad_token_id: 5
+      padding_side: right
+      truncation_side: right
+  retweet:
+    data_format: json
+    train_dir: easytpp/retweet
+    valid_dir: easytpp/retweet
+    test_dir: easytpp/retweet
+    data_specs:
+      num_event_types: 3
+      pad_token_id: 3
+      padding_side: right
+      truncation_side: right
+  taxi:
+    data_format: json
+    train_dir: easytpp/taxi
+    valid_dir: easytpp/taxi
+    test_dir: easytpp/taxi
+    data_specs:
+      num_event_types: 10
+      pad_token_id: 10
+      padding_side: right
+      truncation_side: right
+  taobao:
+    data_format: json
+    train_dir: easytpp/taobao
+    valid_dir: easytpp/taobao
+    test_dir: easytpp/taobao
+    data_specs:
+      num_event_types: 20
+      pad_token_id: 20
+      padding_side: right
+      truncation_side: right
+  stackoverflow:
+    data_format: json
+    train_dir: easytpp/stackoverflow
+    valid_dir: easytpp/stackoverflow
+    test_dir: easytpp/stackoverflow
+    data_specs:
+      num_event_types: 22
+      pad_token_id: 22
+      padding_side: right
+      truncation_side: right
+  amazon:
+    data_format: json
+    train_dir: easytpp/amazon
+    valid_dir: easytpp/amazon
+    test_dir: easytpp/amazon
+    data_specs:
+      num_event_types: 16
+      pad_token_id: 16
+      padding_side: right
+      truncation_side: right
+RMTPP_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: RMTPP # model name
+    base_dir: './checkpoints/'
+  trainer_config:
+    batch_size: 256
+    max_epoch: 500
+    shuffle: False
+    optimizer: adam
+    learning_rate: 1.e-3
+    valid_freq: 1
+    use_tfb: False
+    metrics: [ 'acc', 'rmse', 'mae', 'type_error_rate' ]
+    seed: 2019
+    gpu: -1
+  model_config:
+    hidden_size: 32
+    time_emb_size: 16
+    num_layers: 2
+    num_heads: 2
+    mc_num_sample_per_step: 20
+    sharing_param_layer: False
+    loss_integral_num_sample_per_step: 20
+    dropout: 0.0
+    use_ln: False
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 500 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
+      look_ahead_time: 10
+      patience_counter: 5 # the maximum iteration used in adaptive thinning
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+NHP_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: NHP # model name
+    base_dir: './checkpoints/'
+  trainer_config:
+    batch_size: 256
+    max_epoch: 2
+    shuffle: False
+    optimizer: adam
+    learning_rate: 1.e-3
+    valid_freq: 1
+    use_tfb: False
+    metrics: [ 'acc', 'rmse', 'mae', 'type_error_rate' ]
+    seed: 2019
+    gpu: -1
+  model_config:
+    hidden_size: 64
+    loss_integral_num_sample_per_step: 20
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 500 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
+      look_ahead_time: 10
+      patience_counter: 5 # the maximum iteration used in adaptive thinning
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+      num_step_gen: 1
+THP_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: THP # model name
+    base_dir: './checkpoints/'
+  trainer_config:
+    batch_size: 256
+    max_epoch: 30
+    shuffle: False
+    optimizer: adam
+    learning_rate: 1.e-3
+    valid_freq: 1
+    use_tfb: False
+    metrics: [ 'acc', 'rmse', 'mae', 'type_error_rate' ]
+    seed: 2019
+    gpu: -1
+  model_config:
+    hidden_size: 32
+    time_emb_size: 16
+    num_layers: 2
+    num_heads: 2
+    mc_num_sample_per_step: 20
+    loss_integral_num_sample_per_step: 20
+    use_ln: False
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 500 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
+      look_ahead_time: 10
+      patience_counter: 5 # the maximum iteration used in adaptive thinning
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+      num_step_gen: 1
+SAHP_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: SAHP
+    base_dir: ./checkpoints/
+  trainer_config:
+    batch_size: 256
+    max_epoch: 20
+    shuffle: false
+    optimizer: adam
+    learning_rate: 0.001
+    valid_freq: 1
+    use_tfb: false
+    metrics:
+    - acc
+    - rmse
+    - mae
+    - type_error_rate
+    seed: 2019
+    gpu: 0
+  model_config:
+    hidden_size: 32
+    time_emb_size: 16
+    num_layers: 2
+    num_heads: 2
+    loss_integral_num_sample_per_step: 20
+    dropout: 0.0
+    use_ln: false
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 500
+      look_ahead_time: 10
+      patience_counter: 5
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+FullyNN_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: FullyNN
+    base_dir: ./checkpoints/
+  trainer_config:
+    batch_size: 256
+    max_epoch: 500
+    shuffle: false
+    optimizer: adam
+    learning_rate: 0.001
+    valid_freq: 1
+    use_tfb: false
+    metrics:
+    - acc
+    - rmse
+    - mae
+    - type_error_rate
+    seed: 2019
+    gpu: 0
+  model_config:
+    rnn_type: LSTM
+    hidden_size: 32
+    time_emb_size: 4
+    num_layers: 2
+    mc_num_sample_per_step: 20
+    sharing_param_layer: false
+    loss_integral_num_sample_per_step: 20
+    dropout: 0.0
+    use_ln: false
+    model_specs:
+      num_mlp_layers: 3
+IntensityFree_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: IntensityFree
+    base_dir: ./checkpoints/
+  trainer_config:
+    batch_size: 256
+    max_epoch: 500
+    shuffle: false
+    optimizer: adam
+    learning_rate: 0.001
+    valid_freq: 1
+    use_tfb: false
+    metrics:
+    - acc
+    - rmse
+    - mae
+    - type_error_rate
+    seed: 2019
+    gpu: 0
+  model_config:
+    hidden_size: 32
+    time_emb_size: 16
+    num_layers: 2
+    num_heads: 2
+    mc_num_sample_per_step: 20
+    sharing_param_layer: false
+    loss_integral_num_sample_per_step: 20
+    dropout: 0.0
+    use_ln: false
+    model_specs:
+      num_mix_components: 3
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 500
+      look_ahead_time: 10
+      patience_counter: 5
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+ODETPP_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: ODETPP
+    base_dir: ./checkpoints/
+  trainer_config:
+    batch_size: 32
+    max_epoch: 500
+    shuffle: false
+    optimizer: adam
+    learning_rate: 0.1
+    valid_freq: 1
+    use_tfb: false
+    metrics:
+    - acc
+    - rmse
+    - mae
+    - type_error_rate
+    seed: 2019
+    gpu: 0
+  model_config:
+    hidden_size: 4
+    time_emb_size: 4
+    num_layers: 1
+    sharing_param_layer: false
+    loss_integral_num_sample_per_step: 20
+    dropout: 0.0
+    use_ln: false
+    model_specs:
+      ode_num_sample_per_step: 2
+      time_factor: 100
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 50
+      look_ahead_time: 10
+      patience_counter: 5
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+AttNHP_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: AttNHP
+    base_dir: ./checkpoints/
+  trainer_config:
+    batch_size: 256
+    max_epoch: 500
+    shuffle: false
+    optimizer: adam
+    learning_rate: 0.001
+    valid_freq: 1
+    use_tfb: false
+    metrics:
+    - acc
+    - rmse
+    - mae
+    - type_error_rate
+    seed: 2019
+    gpu: 0
+  model_config:
+    hidden_size: 16
+    time_emb_size: 4
+    num_layers: 2
+    num_heads: 2
+    loss_integral_num_sample_per_step: 10
+    dropout: 0.0
+    use_ln: false
+    thinning:
+      num_seq: 2
+      num_sample: 1
+      num_exp: 50
+      look_ahead_time: 10
+      patience_counter: 5
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
+S2P2_train:
+  base_config:
+    stage: train
+    backend: torch
+    dataset_id: e_commerce
+    runner_id: std_tpp
+    model_id: S2P2
+    base_dir: ./checkpoints/
+  trainer_config:
+    batch_size: 256
+    max_epoch: 300
+    shuffle: true
+    optimizer: adam
+    learning_rate: 0.01
+    valid_freq: 1
+    use_tfb: false
+    metrics:
+    - acc
+    - rmse
+    - mae
+    - type_error_rate
+    seed: 2019
+    gpu: 0
+  model_config:
+    hidden_size: 128
+    loss_integral_num_sample_per_step: 10
+    use_mc_samples: true
+    num_layers: 4
+    model_specs:
+      P: 16
+      dropout_rate: 0.1
+      act_func: gelu
+      for_loop: true
+      pre_norm: false
+      post_norm: true
+      int_forward_variant: false
+      int_backward_variant: true
+      relative_time: true

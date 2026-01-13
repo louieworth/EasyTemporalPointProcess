@@ -51,3 +51,50 @@ def acc_metric_function(predictions, labels, **kwargs):
     pred = np.reshape(pred, [-1])
     label = np.reshape(label, [-1])
     return np.mean(pred == label)
+
+
+@MetricsHelper.register(name='mae', direction=MetricsHelper.MINIMIZE, overwrite=False)
+def mae_metric_function(predictions, labels, **kwargs):
+    """Compute mae metrics of the time predictions.
+
+    Args:
+        predictions (np.array): model predictions.
+        labels (np.array): ground truth.
+
+    Returns:
+        float: average mae of the time predictions.
+    """
+    seq_mask = kwargs.get('seq_mask')
+    if seq_mask is None or len(seq_mask) == 0:
+        pred = predictions[PredOutputIndex.TimePredIndex]
+        label = labels[PredOutputIndex.TimePredIndex]
+    else:
+        pred = predictions[PredOutputIndex.TimePredIndex][seq_mask]
+        label = labels[PredOutputIndex.TimePredIndex][seq_mask]
+
+    pred = np.reshape(pred, [-1])
+    label = np.reshape(label, [-1])
+    return np.mean(np.abs(pred - label))
+
+
+@MetricsHelper.register(name='type_error_rate', direction=MetricsHelper.MINIMIZE, overwrite=False)
+def type_error_rate_metric_function(predictions, labels, **kwargs):
+    """Compute type error rate metrics of the type predictions.
+
+    Args:
+        predictions (np.array): model predictions.
+        labels (np.array): ground truth.
+
+    Returns:
+        float: type error rate of the type predictions.
+    """
+    seq_mask = kwargs.get('seq_mask')
+    if seq_mask is None or len(seq_mask) == 0:
+        pred = predictions[PredOutputIndex.TypePredIndex]
+        label = labels[PredOutputIndex.TypePredIndex]
+    else:
+        pred = predictions[PredOutputIndex.TypePredIndex][seq_mask]
+        label = labels[PredOutputIndex.TypePredIndex][seq_mask]
+    pred = np.reshape(pred, [-1])
+    label = np.reshape(label, [-1])
+    return np.mean(pred != label)

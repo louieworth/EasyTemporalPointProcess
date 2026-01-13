@@ -69,23 +69,54 @@ class TPPDataLoader:
         Returns:
             dict: Dictionary with processed event sequences.
         """
-        from datasets import load_dataset
-        split_mapped = 'validation' if split == 'dev' else split
-        if source_dir.endswith('.json'):
-            data = load_dataset('json', data_files={split_mapped: source_dir}, split=split_mapped)
-        elif source_dir.startswith('easytpp'):
-            data = load_dataset(source_dir, split=split_mapped)
+        import json
+        import os
+
+        # Handle local JSON files with specific naming pattern
+        if os.path.exists(source_dir) and source_dir.endswith('.json'):
+            # Single file case - the source_dir is the file path
+            with open(source_dir, 'r') as f:
+                data = json.load(f)
+        elif os.path.isdir(source_dir):
+            # Directory case - look for files with split in the name
+            json_files = [f for f in os.listdir(source_dir) if f.endswith('.json') and split in f]
+            if not json_files:
+                raise FileNotFoundError(f"No JSON file found for split '{split}' in directory {source_dir}")
+
+            file_path = os.path.join(source_dir, json_files[0])
+            with open(file_path, 'r') as f:
+                data = json.load(f)
         else:
-            raise ValueError("Unsupported source directory format for JSON.")
+            # Handle Hugging Face datasets
+            from datasets import load_dataset
+            split_mapped = 'validation' if split == 'dev' else split
+            if source_dir.startswith('easytpp'):
+                data = load_dataset(source_dir, split=split_mapped)
+            else:
+                raise ValueError("Unsupported source directory format for JSON.")
 
-        py_assert(data['dim_process'][0] == self.num_event_types,
-                  ValueError, "Inconsistent dim_process in different splits.")
+        # Process local JSON data
+        if isinstance(data, list):
+            # Local JSON file format - list of sequences
+            if data and 'dim_process' in data[0]:
+                py_assert(data[0]["dim_process"] == self.num_event_types,
+                          ValueError, "Inconsistent dim_process in different splits.")
 
-        return {
-            'time_seqs': data['time_since_start'],
-            'type_seqs': data['type_event'],
-            'time_delta_seqs': data['time_since_last_event']
-        }
+            return {
+                'time_seqs': [seq["time_since_start"] for seq in data],
+                'type_seqs': [seq["type_event"] for seq in data],
+                'time_delta_seqs': [seq["time_since_last_event"] for seq in data]
+            }
+        else:
+            # Hugging Face dataset format
+            py_assert(data['dim_process'][0] == self.num_event_types,
+                      ValueError, "Inconsistent dim_process in different splits.")
+
+            return {
+                'time_seqs': data['time_since_start'],
+                'type_seqs': data['type_event'],
+                'time_delta_seqs': data['time_since_last_event']
+            }
 
     def get_loader(self, split='train', **kwargs):
         """Get the corresponding data loader.

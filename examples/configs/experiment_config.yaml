@@ -36,13 +36,43 @@ data:
       padding_side: right
       truncation_side: right
   retweet:
-    data_format: pkl
-    train_dir: ../data/retweet/train.pkl
-    valid_dir: ../data/retweet/dev.pkl
-    test_dir: ../data/retweet/test.pkl
+    data_format: json
+    train_dir: easytpp/retweet
+    valid_dir: easytpp/retweet
+    test_dir: easytpp/retweet
     data_specs:
       num_event_types: 3
       pad_token_id: 3
+      padding_side: right
+      truncation_side: right
+  taobao:
+    data_format: json
+    train_dir: easytpp/taobao
+    valid_dir: easytpp/taobao
+    test_dir: easytpp/taobao
+    data_specs:
+      num_event_types: 20
+      pad_token_id: 20
+      padding_side: right
+      truncation_side: right
+  stackoverflow:
+    data_format: json
+    train_dir: easytpp/stackoverflow
+    valid_dir: easytpp/stackoverflow
+    test_dir: easytpp/stackoverflow
+    data_specs:
+      num_event_types: 22
+      pad_token_id: 22
+      padding_side: right
+      truncation_side: right
+  amazon:
+    data_format: json
+    train_dir: easytpp/amazon
+    valid_dir: easytpp/amazon
+    test_dir: easytpp/amazon
+    data_specs:
+      num_event_types: 16
+      pad_token_id: 16
       padding_side: right
       truncation_side: right
 

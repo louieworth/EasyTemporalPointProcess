@@ -17,9 +17,14 @@ log
 *.swp
 *.swo
 .vscode
-
-
-
+.claude
+.github
+.venv
+uv.lock
+results
+.python-version
+pyproject.toml
+checkpoints
 
 # idea files
 .idea

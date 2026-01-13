@@ -1,0 +1,107 @@
+S2P2_train:
+  base_config:
+    backend: torch
+    base_dir: ./checkpoints/
+    dataset_id: amazon
+    model_id: S2P2
+    runner_id: std_tpp
+    stage: train
+  model_config:
+    hidden_size: 128
+    loss_integral_num_sample_per_step: 10
+    model_specs:
+      P: 16
+      act_func: gelu
+      dropout_rate: 0.1
+      for_loop: true
+      int_backward_variant: true
+      int_forward_variant: false
+      post_norm: true
+      pre_norm: false
+      relative_time: true
+    num_layers: 4
+    use_mc_samples: true
+  trainer_config:
+    batch_size: 256
+    gpu: -1
+    learning_rate: 0.01
+    max_epoch: 300
+    metrics:
+    - acc
+    - rmse
+    optimizer: adam
+    seed: 2019
+    shuffle: true
+    use_tfb: false
+    valid_freq: 1
+data:
+  amazon:
+    data_format: json
+    data_specs:
+      num_event_types: 16
+      pad_token_id: 16
+      padding_side: right
+      truncation_side: right
+    test_dir: easytpp/amazon
+    train_dir: easytpp/amazon
+    valid_dir: easytpp/amazon
+  conttime:
+    data_format: pkl
+    data_specs:
+      num_event_types: 5
+      pad_token_id: 5
+      padding_side: right
+      truncation_side: right
+    test_dir: ../data/conttime/test.pkl
+    train_dir: ../data/conttime/train.pkl
+    valid_dir: ../data/conttime/dev.pkl
+  hawkes_1d:
+    data_format: pkl
+    data_specs:
+      num_event_types: 1
+      pad_token_id: 1
+      padding_side: right
+      truncation_side: right
+    test_dir: ../data/hawkes/test.pkl
+    train_dir: ../data/hawkes/train.pkl
+    valid_dir: ../data/hawkes/dev.pkl
+  retweet:
+    data_format: json
+    data_specs:
+      num_event_types: 3
+      pad_token_id: 3
+      padding_side: right
+      truncation_side: right
+    test_dir: easytpp/retweet
+    train_dir: easytpp/retweet
+    valid_dir: easytpp/retweet
+  stackoverflow:
+    data_format: json
+    data_specs:
+      num_event_types: 22
+      pad_token_id: 22
+      padding_side: right
+      truncation_side: right
+    test_dir: easytpp/stackoverflow
+    train_dir: easytpp/stackoverflow
+    valid_dir: easytpp/stackoverflow
+  taobao:
+    data_format: json
+    data_specs:
+      num_event_types: 20
+      pad_token_id: 20
+      padding_side: right
+      truncation_side: right
+    test_dir: easytpp/taobao
+    train_dir: easytpp/taobao
+    valid_dir: easytpp/taobao
+  taxi:
+    data_format: json
+    data_specs:
+      num_event_types: 10
+      pad_token_id: 10
+      padding_side: right
+    test_dir: easytpp/taxi
+    train_dir: easytpp/taxi
+    valid_dir: easytpp/taxi
+pipeline_config_id: runner_config
