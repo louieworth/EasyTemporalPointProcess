@@ -1,13 +1,13 @@
 pipeline_config_id: runner_config
 data:
-  e_commerce:
+  customer_journey:
     data_format: json
-    train_dir: dataset/e_commerce_train.json
-    valid_dir: dataset/e_commerce_test.json
-    test_dir: dataset/e_commerce_test.json
+    train_dir: data/customer_journey/20_to_50/train.json
+    valid_dir: data/customer_journey/20_to_50/dev.json
+    test_dir: data/customer_journey/20_to_50/test.json
     data_specs:
-      num_event_types: 5
-      pad_token_id: 5
+      num_event_types: 3
+      pad_token_id: 3
       padding_side: right
       truncation_side: right
   retweet:
@@ -92,7 +92,7 @@ RMTPP_train:
     thinning:
       num_seq: 10
       num_sample: 1
-      num_exp: 500 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
+      num_exp: 100 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
       look_ahead_time: 10
       patience_counter: 5 # the maximum iteration used in adaptive thinning
       over_sample_rate: 5
@@ -107,7 +107,7 @@ NHP_train:
     model_id: NHP # model name
     base_dir: './checkpoints/'
   trainer_config:
-    batch_size: 256
+    batch_size: 32
     max_epoch: 2
     shuffle: False
     optimizer: adam
@@ -123,7 +123,7 @@ NHP_train:
     thinning:
       num_seq: 10
       num_sample: 1
-      num_exp: 500 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
+      num_exp: 100 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
       look_ahead_time: 10
       patience_counter: 5 # the maximum iteration used in adaptive thinning
       over_sample_rate: 5
@@ -140,7 +140,7 @@ THP_train:
     base_dir: './checkpoints/'
   trainer_config:
     batch_size: 256
-    max_epoch: 30
+    max_epoch: 500
     shuffle: False
     optimizer: adam
     learning_rate: 1.e-3
@@ -160,7 +160,7 @@ THP_train:
     thinning:
       num_seq: 10
       num_sample: 1
-      num_exp: 500 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
+      num_exp: 100 # number of i.i.d. Exp(intensity_bound) draws at one time in thinning algorithm
       look_ahead_time: 10
       patience_counter: 5 # the maximum iteration used in adaptive thinning
       over_sample_rate: 5
@@ -177,7 +177,7 @@ SAHP_train:
     base_dir: ./checkpoints/
   trainer_config:
     batch_size: 256
-    max_epoch: 20
+    max_epoch: 500
     shuffle: false
     optimizer: adam
     learning_rate: 0.001
@@ -201,7 +201,7 @@ SAHP_train:
     thinning:
       num_seq: 10
       num_sample: 1
-      num_exp: 500
+      num_exp: 100
       look_ahead_time: 10
       patience_counter: 5
       over_sample_rate: 5
@@ -242,6 +242,16 @@ FullyNN_train:
     use_ln: false
     model_specs:
       num_mlp_layers: 3
+      proper_marked_intensities: true
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 100
+      look_ahead_time: 10
+      patience_counter: 5
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5
 IntensityFree_train:
   base_config:
     stage: train
@@ -280,7 +290,7 @@ IntensityFree_train:
     thinning:
       num_seq: 10
       num_sample: 1
-      num_exp: 500
+      num_exp: 100
       look_ahead_time: 10
       patience_counter: 5
       over_sample_rate: 5
@@ -338,7 +348,7 @@ AttNHP_train:
     model_id: AttNHP
     base_dir: ./checkpoints/
   trainer_config:
-    batch_size: 256
+    batch_size: 64
     max_epoch: 500
     shuffle: false
     optimizer: adam
@@ -378,8 +388,8 @@ S2P2_train:
     model_id: S2P2
     base_dir: ./checkpoints/
   trainer_config:
-    batch_size: 256
-    max_epoch: 300
+    batch_size: 16
+    max_epoch: 500
     shuffle: true
     optimizer: adam
     learning_rate: 0.01
@@ -407,3 +417,12 @@ S2P2_train:
       int_forward_variant: false
       int_backward_variant: true
       relative_time: true
+    thinning:
+      num_seq: 10
+      num_sample: 1
+      num_exp: 100
+      look_ahead_time: 10
+      patience_counter: 5
+      over_sample_rate: 5
+      num_samples_boundary: 5
+      dtime_max: 5

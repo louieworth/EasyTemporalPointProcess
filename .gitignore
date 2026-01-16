@@ -10,6 +10,7 @@ easy_tpp.egg-info
 protoc
 protoc-3.4.0.tar.gz
 *_pb2.py
+data/
 
 # misc
 experiments

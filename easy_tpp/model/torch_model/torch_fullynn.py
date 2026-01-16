@@ -43,10 +43,9 @@ class CumulHazardFunctionNetwork(nn.Module):
             p.data = torch.clamp(p.data, min=self.params_eps)
 
     def forward(self, hidden_states, time_delta_seqs):
-        for p in self.parameters():
-            p.data = torch.clamp(p.data, min=self.params_eps)
-
-        time_delta_seqs.requires_grad_(True)
+        # Note: Removed in-place parameter clamping as it breaks the computation graph.
+        # Positivity is ensured by softplus activation at the output layer.
+        time_delta_seqs = time_delta_seqs.clone().detach().requires_grad_(True)
 
         # [batch_size, seq_len, hidden_size]
         t = self.layer_dense_1(time_delta_seqs.unsqueeze(dim=-1))
@@ -204,6 +203,9 @@ class FullyNN(TorchBaseModel):
 
         num_samples = sample_dtimes.size()[-1]
         batch_size, seq_len, hidden_size = hidden_states.shape
+
+        # Enable gradients for sample_dtimes to allow grad() to work
+        sample_dtimes = sample_dtimes.clone().detach().requires_grad_(True)
 
         hidden_states_ = hidden_states[..., None, :].expand(batch_size, seq_len, num_samples, hidden_size)
         _, derivative_integral_lambda = self.layer_intensity.forward(
